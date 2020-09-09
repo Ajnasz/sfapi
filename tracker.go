@@ -51,19 +51,19 @@ type DiscussionPost struct {
 
 // Ticket represents Sourceforge issue
 type Ticket struct {
-	_id          string             `json:"_id"`
+	ID           string             `json:"_id"`
 	AssignedTo   string             `json:"assigned_to"`
 	AssignedToID string             `json:"assigned_to_id"`
 	Attachments  []TicketAttachment `json:"attachments"`
 	CreatedDate  string             `json:"created_date"`
 	CustomFields struct {
 		Milestone string `json:"_milestone"`
-		_priority string `json:"_priority"`
+		Priority  string `json:"_priority"`
 	} `json:"custom_fields"`
 	Description        string `json:"description"`
 	DiscussionDisabled bool   `json:"discussion_disabled"`
 	DiscussionThread   struct {
-		_id          string           `json:"_id"`
+		ID           string           `json:"_id"`
 		DiscussionID string           `json:"discussion_id"`
 		Limit        int              `json:"limit"`
 		Page         interface{}      `json:"page"`
@@ -84,6 +84,7 @@ type Ticket struct {
 	VotesUp             int           `json:"votes_up"`
 }
 
+// TicketResponse represents a ticket response
 type TicketResponse struct {
 	Ticket `json:"ticket"`
 }
@@ -93,7 +94,7 @@ type TrackerService struct {
 	client *Client
 }
 
-// Downloads information of a tracker
+// Info Downloads information of a tracker
 func (s *TrackerService) Info(trackerName string) (*TrackerInfo, *Response, error) {
 	req, err := s.client.NewRequest("GET", path.Join(s.client.Project, trackerName), nil)
 
