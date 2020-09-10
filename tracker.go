@@ -1,7 +1,7 @@
 package sfapi
 
 import (
-	// "fmt"
+	"fmt"
 	"path"
 	"strconv"
 )
@@ -89,14 +89,26 @@ type TicketResponse struct {
 	Ticket `json:"ticket"`
 }
 
+type RequestQuery struct {
+	Page  int
+	Limit int
+}
+
+func NewRequestQuery() *RequestQuery {
+	return &RequestQuery{
+		Page:  0,
+		Limit: 100,
+	}
+}
+
 // TrackerService handles communication with the ticket tracker tool releated methods of the Sourceforge API
 type TrackerService struct {
 	client *Client
 }
 
 // Info Downloads information of a tracker
-func (s *TrackerService) Info(trackerName string) (*TrackerInfo, *Response, error) {
-	req, err := s.client.NewRequest("GET", path.Join(s.client.Project, trackerName), nil)
+func (s *TrackerService) Info(trackerName string, query RequestQuery) (*TrackerInfo, *Response, error) {
+	req, err := s.client.NewRequest("GET", fmt.Sprintf("%s?limit=%d&page=%d", path.Join(s.client.Project, trackerName), query.Limit, query.Page), nil)
 
 	if err != nil {
 		return nil, nil, err
