@@ -12,18 +12,15 @@ type Milestone struct {
 	Closed   int  `json:"closed"`
 	Complete bool `json:"complete"`
 	// Default     bool   `json:"default"` // bool or string in sourceforge
-	Description string    `json:"description"`
-	DueDate     string    `json:"due_date"`
-	DueTime     time.Time `json:"due"`
-	Name        string    `json:"name"`
-	Total       int       `json:"total"`
+	Description string `json:"description"`
+	DueDate     string `json:"due_date"`
+	Name        string `json:"name"`
+	Total       int    `json:"total"`
 }
 
-func (m *Milestone) updateTimeField() {
-	if m.DueDate != "" {
-		dueTime, _ := time.Parse("2006-01-02 15:04:05", m.DueDate)
-		m.DueTime = dueTime
-	}
+func (m *Milestone) DueTime() time.Time {
+	dueTime, _ := time.Parse("2006-01-02 15:04:05", m.DueDate)
+	return dueTime
 }
 
 // TrackerInfoTicket represents tickets in the TrackerInfo response
@@ -58,6 +55,12 @@ type DiscussionPost struct {
 	Timestamp   string             `json:"timestamp"`
 }
 
+func (t DiscussionPost) TimestampTime() time.Time {
+	timestampTime, _ := time.Parse("2006-01-02 15:04:05", t.Timestamp)
+	return timestampTime
+
+}
+
 // Ticket represents Sourceforge issue
 type Ticket struct {
 	ID           string             `json:"_id"`
@@ -65,7 +68,6 @@ type Ticket struct {
 	AssignedToID string             `json:"assigned_to_id"`
 	Attachments  []TicketAttachment `json:"attachments"`
 	CreatedDate  string             `json:"created_date"`
-	CreatedTime  time.Time          `json:"created"`
 	CustomFields struct {
 		Milestone string `json:"_milestone"`
 		Priority  string `json:"_priority"`
@@ -83,7 +85,6 @@ type Ticket struct {
 	DiscussionThreadURL string        `json:"discussion_thread_url"`
 	Labels              []string      `json:"labels"`
 	ModDate             string        `json:"mod_date"`
-	ModTime             time.Time     `json:"mod"`
 	Private             bool          `json:"private"`
 	RelatedArtifacts    []interface{} `json:"related_artifacts"`
 	ReportedBy          string        `json:"reported_by"`
@@ -95,9 +96,14 @@ type Ticket struct {
 	VotesUp             int           `json:"votes_up"`
 }
 
-func (t *Ticket) updateTimeFields() {
-	t.CreatedTime, _ = time.Parse("2006-01-02 15:04:05", t.CreatedDate)
-	t.ModTime, _ = time.Parse("2006-01-02 15:04:05", t.ModDate)
+func (t *Ticket) CreatedTime() time.Time {
+	createdTime, _ := time.Parse("2006-01-02 15:04:05", t.CreatedDate)
+	return createdTime
+}
+
+func (t *Ticket) ModTime() time.Time {
+	modTime, _ := time.Parse("2006-01-02 15:04:05", t.ModDate)
+	return modTime
 }
 
 // TicketResponse represents a ticket response
@@ -139,10 +145,6 @@ func (s *TrackerService) Info(trackerName string, query RequestQuery) (*TrackerI
 		return nil, nil, err
 	}
 
-	for _, milestone := range tickets.Milestones {
-		milestone.updateTimeField()
-	}
-
 	return tickets, resp, err
 }
 
@@ -162,7 +164,6 @@ func (s *TrackerService) Get(trackerName string, id int) (*Ticket, *Response, er
 	if err != nil {
 		return nil, nil, err
 	}
-	ticketResponse.Ticket.updateTimeFields()
 
 	return &ticketResponse.Ticket, resp, err
 }

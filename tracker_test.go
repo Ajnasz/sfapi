@@ -32,9 +32,7 @@ func TestMileStoneTimeUpdate(t *testing.T) {
 			DueDate: testCase.DueDate,
 		}
 
-		m.updateTimeField()
-
-		formatted := m.DueTime.Format("2006-01-02 15:04:05")
+		formatted := m.DueTime().Format("2006-01-02 15:04:05")
 		if formatted != testCase.Expected {
 			t.Errorf("%q expected: %q, got %q", testCase.DueDate, testCase.Expected, formatted)
 		}
@@ -80,13 +78,11 @@ func TestTicketTimeUpdat(t *testing.T) {
 			ModDate:     testCase.ModDate,
 		}
 
-		m.updateTimeFields()
-
-		formatted := m.CreatedTime.Format("2006-01-02 15:04:05")
+		formatted := m.CreatedTime().Format("2006-01-02 15:04:05")
 		if formatted != testCase.ExpectedCreatedTime {
 			t.Errorf("created expected: %q, got %q", testCase.ExpectedCreatedTime, formatted)
 		}
-		formatted = m.ModTime.Format("2006-01-02 15:04:05")
+		formatted = m.ModTime().Format("2006-01-02 15:04:05")
 		if formatted != testCase.ExpectedModTime {
 			t.Errorf("mod expected: %q, got %q", testCase.ExpectedModTime, formatted)
 		}
