@@ -18,7 +18,7 @@ type ErrorResponse struct {
 }
 
 func (r *ErrorResponse) Error() string {
-	return fmt.Sprintf("%v %v: %d %v %+v",
+	return fmt.Sprintf("%v %v: %d",
 		r.Response.Request.Method, r.Response.Request.URL, r.Response.StatusCode)
 }
 
